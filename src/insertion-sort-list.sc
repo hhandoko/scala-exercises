@@ -7,7 +7,7 @@ val expected = input.sorted
 
 // Arrange
 // -------
-def sort(list: mutable.LinkedList[Int]): mutable.LinkedList[Int] = {
+def insertionSortList(list: mutable.LinkedList[Int]): mutable.LinkedList[Int] = {
   for (i <- 1 to list.length - 1) {
     var j = i
     var continue = true
@@ -27,7 +27,7 @@ def swap(list: mutable.LinkedList[Int], posX: Int, posY: Int): Unit = {
 
 // Act
 // ---
-val result = sort(input)
+val result = insertionSortList(input)
 
 // Assert
 // ------

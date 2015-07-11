@@ -1,23 +1,21 @@
+// https://leetcode.com/problems/divide-two-integers/
 import scala.util.{Failure, Success, Try}
 
-// https://leetcode.com/problems/divide-two-integers/
 // Input and expected output
-val input = 100
-val divisor = 5
+val inputDividend = 100
+val inputDivisor = 5
 val expected = 20
 
 // Arrange
 // -------
-def divide(x: Int, y: Int): Int = {
+def divide(dividend: Int, divisor: Int): Int = {
   Try({
-    var i = y
+    var i = divisor
     var j = 0
-    var continue = true
     do {
-      if (i == x) continue = false
-      i = i + y
+      i = i + divisor
       j = j + 1
-    } while(continue)
+    } while(i <= dividend)
     j
   }) match {
     case Success(res) => res
@@ -27,7 +25,7 @@ def divide(x: Int, y: Int): Int = {
 
 // Act
 // ---
-val result = divide(input, divisor)
+val result = divide(inputDividend, inputDivisor)
 
 // Assert
 // ------

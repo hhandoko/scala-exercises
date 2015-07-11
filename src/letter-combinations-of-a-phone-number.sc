@@ -1,6 +1,7 @@
+// https://leetcode.com/problems/letter-combinations-of-a-phone-number/
 import scala.collection.mutable.ListBuffer
 
-// https://leetcode.com/problems/letter-combinations-of-a-phone-number/
+// Input and expected output
 val input = "23"
 val expected = Array("ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf")
 
@@ -17,7 +18,7 @@ val maps =
     "8" -> "tuv",
     "9" -> "wxyz")
 
-def combine(pressedKeys: String) = {
+def letterCombinations(digits: String) = {
 
   def combineRecurse(initial: Array[String], combinator: Array[Char]) = {
     var result = ListBuffer[String]()
@@ -30,28 +31,24 @@ def combine(pressedKeys: String) = {
   }
 
   // Assume not all pressed digits can be mapped
-  val digits = for {
-    digit <- pressedKeys.toCharArray
+  val mappedDigits = for {
+    digit <- digits.toCharArray
     if (maps get digit.toString).isDefined
   } yield digit
 
-  var trail = digits.tail
-  var result = ListBuffer[String]() ++ maps(digits.head.toString).toCharArray.map(_.toString)
-  var continue = true
+  var trail = mappedDigits.tail
+  var result = ListBuffer[String]() ++ maps(mappedDigits.head.toString).toCharArray.map(_.toString)
   do {
-    if (trail.nonEmpty) {
-      result = combineRecurse(result.toArray, maps(trail.head.toString).toCharArray)
-      trail = trail.tail
-    } else {
-      continue = false
-    }
-  } while(continue)
+    result = combineRecurse(result.toArray, maps(trail.head.toString).toCharArray)
+    trail = trail.tail
+  } while(trail.nonEmpty)
   result
+
 }
 
 // Act
 // ---
-val result = combine(input).toArray
+val result = letterCombinations(input).toArray
 
 // Assert
 // ------

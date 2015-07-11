@@ -6,14 +6,18 @@ val expected = 2
 
 // Arrange
 // -------
-val sorted = input.sorted
+def singleNumber(nums: Array[Int]): Int = {
+
+  nums.sorted.groupBy(identity).collectFirst {
+    case (x, ys) if ys.length <= 1 => x
+  }.get
+
+}
 
 // Act
 // ---
-val result = sorted.groupBy(identity).collectFirst {
-  case (x, ys) if ys.length <= 1 => x
-}
+val result = singleNumber(input)
 
 // Assert
 // ------
-assert (expected == result.get)
+assert (expected == result)
