@@ -12,10 +12,11 @@
 //         ListNode next;
 //         ListNode(int x) { val = x; }
 //     }
+import scala.annotation.tailrec
 //
 // Definitions
 // -----------
-case class ListNode(value: Int, var next: Option[ListNode])
+case class ListNode(value: Int, next: Option[ListNode])
 object ListNode {
 
   /**
@@ -33,10 +34,7 @@ object ListNode {
    * @return the instance.
    */
   def apply(xs: Array[Int]): ListNode = {
-    val reversed = xs.reverse
-    reversed.tail.foldLeft(ListNode(reversed.head)) {
-      (acc, item) => new ListNode(item, Some(acc))
-    }
+    xs.init.foldRight(ListNode(xs.last)) { (i, acc) => ListNode(i, Some(acc)) }
   }
 
 }
@@ -58,35 +56,38 @@ val expected = 7
  */
 def getNthFromTail(head: ListNode, indexFromTail: Int): ListNode = {
 
-  // Use two pointers. Advance the shadow node to nth index (param),
-  // and then start advancing the node. When the shadow node gets to the end
-  // of the linked list, the current node should contain the value we're
-  // looking for.
-  //
-  // Visual explanation:
-  //   Start index:
-  //     shadow = (2), 3, 4, 5, 6, 7, 8, 9, 10, 11
-  //     node   = (2), 3, 4, 5, 6, 7, 8, 9, 10, 11
-  //   5th index:
-  //     shadow = 2, 3, 4, 5, (6), 7, 8, 9, 10, 11
-  //     node   = (2), 3, 4, 5, 6, 7, 8, 9, 10, 11
-  //   End index:
-  //     shadow = 2, 3, 4, 5, 6, 7, 8, 9, 10, (11)
-  //     node   = 2, 3, 4, 5, 6, (7), 8, 9, 10, 11
+  /**
+   * Tail-recurse to advance the node to get the nth node.
+   *
+   * Use two pointers. Advance the shadow node to nth index (param),
+   * and then start advancing the node. When the shadow node gets to the end
+   * of the linked list, the current node should contain the value we're
+   * looking for.
+   *
+   * Visual explanation:
+   *   Start index:
+   *     shadow = (2), 3, 4, 5, 6, 7, 8, 9, 10, 11
+   *     node   = (2), 3, 4, 5, 6, 7, 8, 9, 10, 11
+   *   5th index:
+   *     shadow = 2, 3, 4, 5, (6), 7, 8, 9, 10, 11
+   *     node   = (2), 3, 4, 5, 6, 7, 8, 9, 10, 11
+   *   End index:
+   *     shadow = 2, 3, 4, 5, 6, 7, 8, 9, 10, (11)
+   *     node   = 2, 3, 4, 5, 6, (7), 8, 9, 10, 11
+   *
+   * @param node the linked list head node.
+   * @param shadow the linked list shadow node.
+   * @param counter the counter.
+   * @return the nth node from tail.
+   */
+  @tailrec
+  def advance(node: ListNode, shadow: ListNode, counter: Int): ListNode = {
+    if (shadow.next.isDefined && counter > 0) advance(node, shadow.next.get, counter - 1)
+    else if (shadow.next.isDefined) advance(node.next.get, shadow.next.get, 0)
+    else node
+  }
 
-  var counter = 1
-  var node = head
-  var shadowNode = head
-
-  do {
-    if (counter >= indexFromTail) {
-      node = node.next.get
-    }
-    shadowNode = shadowNode.next.get
-    counter = counter + 1
-  } while(shadowNode.next.isDefined)
-
-  node
+  advance(head, head, indexFromTail - 1)
 
 }
 //
