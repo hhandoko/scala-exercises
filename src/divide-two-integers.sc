@@ -3,7 +3,7 @@
 //   If it is overflow, return MAX_INT.
 //
 // Source: https://leetcode.com/problems/divide-two-integers/
-import scala.util.{Failure, Success, Try}
+import scala.annotation.tailrec
 //
 // Input and expected output
 // -------------------------
@@ -22,25 +22,27 @@ val expected = 20
  */
 def divide(dividend: Int, divisor: Int): Int = {
 
-  // Continually adding the `divisor` to reach the `dividend` to get the result.
-  // Alternatively, we can work backwards from the `dividend` and continually
-  // subtracting it with the `divisor` until the result is `0`.
+  // TODO: How to deal with negative inputs (dividend / divisor)
 
-  // Wrap in `Try` to catch overflow error to return Int's MAX_VALUE.
-  // Alternatively, Java's `try { ... } catch` can also be used.
-  Try({
-    var i = divisor
-    var j = 0
-    do {
-      i = i + divisor
-      j = j + 1
-    } while(i <= dividend)
-    j
-  }) match {
-    case Success(result) => result
-    case Failure(fail) => Int.MaxValue
+  /**
+   * Tail-recursive division.
+   *
+   * Continually adding the `divisor` to reach the `dividend` to get the result.
+   * Alternatively, we can work backwards from the `dividend` and continually
+   * subtracting it with the `divisor` until the result is `0`.
+   *
+   * @param acc the accumulator.
+   * @param i the current iterator value.
+   * @return the division result.
+   */
+  @tailrec
+  def div(acc: Int, i: Int): Int = {
+    if (i > dividend) acc
+    else div(acc + 1, i + divisor)
   }
 
+  if (dividend == 0 || divisor == 0) Int.MaxValue
+  else div(0, divisor)
 }
 //
 // Act
